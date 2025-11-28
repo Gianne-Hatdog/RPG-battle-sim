@@ -24,11 +24,13 @@ public class Warrior extends Player {
         }
 
         // Energy regeneration
-        if (energy < 100) {
+        if (energy < maxEnergy) {
             energy += 10;
-            if (energy > maxEnergy) energy = maxEnergy;
+        if (energy > maxEnergy) energy = maxEnergy;
+
         }
     }
+}
 
     @Override
     public boolean specialAttack(Character target) {

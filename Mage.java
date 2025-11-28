@@ -3,7 +3,7 @@ public class Mage extends Player {
     private int maxMana;
 
     public Mage(String name) {
-        super(name, 100, 50, 10);
+        super(name, 100, 50, 10); // Base stats
         this.mana = 100;
         this.maxMana = 100;
     }
@@ -13,17 +13,19 @@ public class Mage extends Player {
 
     @Override
     public void attack(Character target) {
+        // Fireball if enough mana
         if (mana >= 10) {
             System.out.println(this.getName() + " casts Fireball at " + target.getName());
             target.takeDamage(this.getAttackDamage());
             mana -= 10;
         } else {
+            // Weak attack when no mana
             System.out.println(this.getName() + " has no mana! Uses weak attack.");
             int weakDamage = Math.max(0, this.getAttackDamage() - 30);
             target.takeDamage(weakDamage);
         }
 
-        // Mana regen
+        // Mana regen after each attack
         if (mana < maxMana) {
             mana += 20;
             if (mana > maxMana) mana = maxMana;
@@ -32,6 +34,7 @@ public class Mage extends Player {
 
     @Override
     public boolean specialAttack(Character target) {
+        // Lightning Strike requires 25 mana
         if (mana >= 25) {
             System.out.println(this.getName() + " casts Lightning Strike!");
             target.takeDamage(this.getAttackDamage() + 25);
@@ -43,9 +46,9 @@ public class Mage extends Player {
         }
     }
 
-    
+    // Called during level up
     public void levelUpMana() {
-        maxMana += 20;  
-        mana = maxMana;  
+        maxMana += 20;   // Increase maximum mana
+        mana = maxMana;  // Restore to full
     }
 }

@@ -1,4 +1,5 @@
 public abstract class Character {
+    // Store the stats of the character
     protected String name;
     protected int health;
     protected int attackDamage;

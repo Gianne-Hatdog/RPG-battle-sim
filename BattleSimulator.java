@@ -8,18 +8,18 @@ public class BattleSimulator {
         boolean playing = true;
 
         while (playing) {
-            showStartMenu(scanner);
-            Player player = createPlayer(scanner);
+            showStartMenu(scanner);              // Shows title screen
+            Player player = createPlayer(scanner);  // Player chooses class & name
 
-            exploreDungeon(player, scanner);
+            exploreDungeon(player, scanner);    // Explore 3 enemy rooms
 
             if (player.isAlive()) {
-                fightBoss(player, scanner);
+                fightBoss(player, scanner);     // If still alive, fight boss
             } else {
                 System.out.println("\nYou died in the dungeon...");
             }
 
-            playing = playAgain(scanner);
+            playing = playAgain(scanner);       // Ask if they want to replay
         }
 
         scanner.close();
@@ -38,10 +38,10 @@ public class BattleSimulator {
             try {
                 menuChoice = scanner.nextInt();
                 scanner.nextLine();
-                if (menuChoice == 1) break;
+                if (menuChoice == 1) break;     // Start game
                 else if (menuChoice == 2) {
                     System.out.println("Exiting... Goodbye!");
-                    System.exit(0);
+                    System.exit(0);             // End program
                 } else {
                     System.out.println("Invalid choice! Enter 1 or 2.");
                 }
@@ -56,7 +56,7 @@ public class BattleSimulator {
     private static Player createPlayer(Scanner scanner) {
         System.out.print("\nYou have forgotten your name...\nEnter a name (leave blank for 'Player'): ");
         String name = scanner.nextLine().trim();
-        if (name.isEmpty()) name = "Player";
+        if (name.isEmpty()) name = "Player";    // Default name
 
         System.out.println("\nIn front of you lies a STAFF and a SWORD.");
         System.out.println("Which will you pick?");
@@ -77,6 +77,7 @@ public class BattleSimulator {
             }
         }
 
+        // Create chosen class
         Player player;
         if (choice == 1) {
             player = new Mage(name);
@@ -94,12 +95,14 @@ public class BattleSimulator {
         boolean northDone = false, eastDone = false, westDone = false;
 
         while (player.isAlive()) {
+            // Show available rooms
             System.out.println("\n===== Dungeon Paths =====");
             System.out.println("North - " + (northDone ? "Cleared" : "Enemy inside"));
             System.out.println("East  - " + (eastDone ? "Cleared" : "Enemy inside"));
             System.out.println("West  - " + (westDone ? "Cleared" : "Enemy inside"));
             System.out.println("South - Boss Room " + (player.getLevel() >= 3 ? "(Unlocked)" : "(Locked until level 3)"));
 
+            // Ask for direction
             String dir = "";
             while (true) {
                 System.out.print("\nWhere do you go? (north/east/west/south): ");
@@ -108,14 +111,16 @@ public class BattleSimulator {
                 else System.out.println("Invalid direction! Type north, east, west, or south.");
             }
 
+            // South = boss room (requires level 3)
             if (dir.equals("south")) {
                 if (player.getLevel() < 3) {
                     System.out.println("A powerful force blocks your way. You must reach level 3 first.");
                     continue;
                 }
-                break; // Proceed to boss
+                break; // Continue to boss fight
             }
 
+            // Fight enemies in each room
             switch (dir) {
                 case "north":
                     if (!northDone) northDone = fightEnemy(player, "Skeleton", scanner);
@@ -131,16 +136,16 @@ public class BattleSimulator {
                     break;
             }
 
-            // Level up after clearing a room
+            // Player levels up after clearing each room
             if ((dir.equals("north") && northDone) || (dir.equals("east") && eastDone) || (dir.equals("west") && westDone)) {
-                player.levelUp();
+                player.levelUp(); // Adds stat boosts + full heal + full mana/energy
             }
         }
     }
 
     // --------------------- NORMAL ENEMY ---------------------
     private static boolean fightEnemy(Player player, String enemyName, Scanner scanner) {
-        Monster enemy = new Monster(enemyName, 80, 15, 5);
+        Monster enemy = new Monster(enemyName, 80, 15, 5); // Normal enemy stats
         System.out.println("\nA " + enemyName + " appears!");
         return runBattle(player, enemy, scanner);
     }
@@ -148,7 +153,7 @@ public class BattleSimulator {
     // --------------------- BOSS FIGHT ---------------------
     private static void fightBoss(Player player, Scanner scanner) {
         System.out.println("\nYou enter the boss chamber...");
-        Monster boss = new Monster("Dungeon Lord", 250, 35, 10);
+        Monster boss = new Monster("Dungeon Lord", 250, 35, 10); // Boss stats
 
         boolean won = runBattle(player, boss, scanner);
 
@@ -162,9 +167,11 @@ public class BattleSimulator {
 
     // --------------------- BATTLE SYSTEM ---------------------
     private static boolean runBattle(Player player, Monster monster, Scanner scanner) {
-        int consecutiveHits = 0;
+        int consecutiveHits = 0; // Tracks consecutive attacks for special attack
 
         while (player.isAlive() && monster.isAlive()) {
+
+            // Show combat stats
             System.out.println("\n------------------------------");
             System.out.println(player.getName() + " HP: " + player.getHealth());
             if (player instanceof Mage) System.out.println("Mana: " + ((Mage) player).getMana());
@@ -173,6 +180,8 @@ public class BattleSimulator {
             System.out.println("------------------------------");
 
             int action = 0;
+
+            // Player chooses action
             while (true) {
                 System.out.println("Choose your action:");
                 System.out.println("1. Attack");
@@ -191,19 +200,21 @@ public class BattleSimulator {
             }
 
             boolean defended = false;
+
+            // ACTION HANDLER
             switch (action) {
                 case 1 -> {
-                    player.attack(monster);
+                    player.attack(monster);   // Normal attack
                     consecutiveHits++;
                 }
                 case 2 -> {
                     System.out.println(player.getName() + " braces for the attack!");
-                    defended = true;
+                    defended = true;         // Reduces incoming damage
                     consecutiveHits = 0;
                 }
                 case 3 -> {
                     if (consecutiveHits >= 3) {
-                        boolean ok = player.specialAttack(monster);
+                        boolean ok = player.specialAttack(monster); // Use class special attack
                         if (ok) consecutiveHits = 0;
                     } else {
                         System.out.println("You need 3 consecutive attacks first!");
@@ -213,6 +224,7 @@ public class BattleSimulator {
 
             if (!monster.isAlive()) break;
 
+            // Monster attacks
             if (defended) {
                 int reduced = Math.max(0, monster.getAttackDamage() - player.getDefense() * 2);
                 System.out.println("The monster attacks but the damage is reduced!");
@@ -222,7 +234,7 @@ public class BattleSimulator {
             }
         }
 
-        return player.isAlive();
+        return player.isAlive(); // True = victory
     }
 
     // --------------------- PLAY AGAIN ---------------------
@@ -242,7 +254,6 @@ public class BattleSimulator {
                 scanner.nextLine();
             }
         }
-        return again == 1;
+        return again == 1; // True = replay
     }
-                    }
-                                                         
+}

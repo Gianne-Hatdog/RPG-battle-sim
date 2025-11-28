@@ -3,7 +3,7 @@ public class Warrior extends Player {
     private int maxEnergy;
 
     public Warrior(String name) {
-        super(name, 75, 30, 15);
+        super(name, 120, 30, 15);
         this.energy = 100;
         this.maxEnergy = 100;
     }
@@ -26,7 +26,7 @@ public class Warrior extends Player {
         // Energy regeneration
         if (energy < 100) {
             energy += 10;
-            if (energy > 100) energy = 100;
+            if (energy > maxEnergy) energy = maxEnergy;
         }
     }
 

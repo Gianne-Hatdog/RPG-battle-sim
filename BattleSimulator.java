@@ -58,7 +58,10 @@ public class BattleSimulator {
     // ----------- PLAYER CREATION -----------
     private static Player createPlayer(Scanner scanner) {
         // Let player enter a name or default to "Player"
-        System.out.print("\nYou have forgotten your name...\nEnter a name (leave blank for 'Player'): ");
+        System.out.println("You slowly open your eyes... huh, where are you?");
+        System.out.println("The place is dark, cold, and kind of creepy...");
+        System.out.println("You have forgotten everything even your name...");
+        System.out.println("Enter a name (leave blank for 'Player'): ");
         String name = scanner.nextLine().trim();
         if (name.isEmpty()) name = "Player";
 

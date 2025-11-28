@@ -1,12 +1,15 @@
 public class Warrior extends Player {
     private int energy;
+    private int maxEnergy;
 
     public Warrior(String name) {
         super(name, 75, 30, 15);
         this.energy = 100;
+        this.maxEnergy = 100;
     }
 
     public int getEnergy() { return energy; }
+    public int getMaxEnergy() {return maxEnergy;}
 
     @Override
     public void attack(Character target) {
@@ -38,5 +41,10 @@ public class Warrior extends Player {
             System.out.println(this.getName() + " doesn't have enough energy for a special attack!");
             return false;
         }
+    }
+
+    public void levelUpEnergy() {
+        maxEnergy += 20;
+        energy = maxEnergy;
     }
 }
